@@ -3,103 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Form</title>
+  <title>Healthy Diet Form</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f5f9;
-      margin: 0;
-      padding: 0;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .container {
+    form {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
       max-width: 400px;
-      margin: 50px auto;
-      background-color: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     h2 {
+      margin-bottom: 20px;
       text-align: center;
       color: #333;
     }
     label {
       display: block;
-      margin-top: 20px;
+      margin-top: 12px;
       font-weight: 500;
     }
     input[type="text"], input[type="tel"] {
       width: 100%;
       padding: 10px;
       margin-top: 6px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
     }
-    .gender-options {
+    .gender-group {
       margin-top: 10px;
     }
-    .gender-options label {
+    .gender-group label {
+      display: inline-block;
       margin-right: 15px;
       font-weight: normal;
     }
     button {
-      margin-top: 25px;
+      margin-top: 20px;
       width: 100%;
       padding: 12px;
-      background-color: #6C63FF;
+      background-color: #4CAF50;
       color: white;
-      border: none;
-      border-radius: 8px;
       font-size: 16px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #584bdb;
+      background-color: #43a047;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Health Info Form</h2>
-    <form id="form">
-      <label for="name">Name*</label>
-      <input type="text" id="name" name="name" required />
 
-      <label>Gender*</label>
-      <div class="gender-options">
-        <label><input type="radio" name="gender" value="Male" required /> Male</label>
-        <label><input type="radio" name="gender" value="Female" required /> Female</label>
-        <label><input type="radio" name="gender" value="Other" required /> Other</label>
-      </div>
+  <form id="dietForm">
+    <h2>Get Your Healthy Diet</h2>
+    <label for="name">Name*</label>
+    <input type="text" id="name" name="name" required />
 
-      <label for="whatsapp">WhatsApp Number*</label>
-      <input type="tel" id="whatsapp" name="whatsapp" required pattern="[0-9]{10}" placeholder="Enter 10-digit number" />
+    <label>Gender*</label>
+    <div class="gender-group">
+      <label><input type="radio" name="gender" value="Male" required /> Male</label>
+      <label><input type="radio" name="gender" value="Female" required /> Female</label>
+      <label><input type="radio" name="gender" value="Other" required /> Other</label>
+    </div>
 
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+    <label for="whatsapp">WhatsApp Number*</label>
+    <input type="tel" id="whatsapp" name="whatsapp" required />
+
+    <button type="submit">Submit</button>
+  </form>
 
   <script>
-    document.getElementById("form").addEventListener("submit", function(e) {
-      e.preventDefault();
+    document.getElementById('dietForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const message = `Hi ${name}, Can I get my Healthy Diet ?`;
+      const encodedMessage = encodeURIComponent(message);
+      const targetNumber = '918110036595'; // Your WhatsApp number without '+' or spaces
 
-      const name = document.getElementById("name").value.trim();
-      const gender = document.querySelector('input[name="gender"]:checked');
-      const number = document.getElementById("whatsapp").value.trim();
-
-      if (!name || !gender || !number) {
-        alert("Please fill all fields!");
-        return;
-      }
-
-      // ✅ Your WhatsApp number
-      const yourNumber = "918110036595";
-
-      // Redirect to WhatsApp with "Hi"
-      const waUrl = `https://wa.me/${yourNumber}?text=Hi`;
-      window.open(waUrl, '_blank');
+      const whatsappUrl = `https://wa.me/${targetNumber}?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
     });
   </script>
+
 </body>
 </html>
