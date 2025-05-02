@@ -1,110 +1,40 @@
+<!-- form.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Form</title>
+  <title>QR Form</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f4f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    form {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input[type="text"], input[type="tel"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    .gender-options {
-      margin-top: 10px;
-    }
-    .gender-options label {
-      font-weight: normal;
-      margin-right: 15px;
-    }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
+    body { font-family: Arial; padding: 20px; }
+    input, select { margin: 10px 0; padding: 10px; width: 100%; }
+    button { padding: 10px 20px; background-color: green; color: white; border: none; }
   </style>
 </head>
 <body>
-  <form id="healthForm">
-    <h2>Health Form</h2>
-
-    <label for="name">Name *</label>
-    <input type="text" id="name" required placeholder="Enter your name" />
-
-    <label>Gender *</label>
-    <div class="gender-options">
-      <label><input type="radio" name="gender" value="Male" required /> Male</label>
-      <label><input type="radio" name="gender" value="Female" required /> Female</label>
-    </div>
-
-    <label for="whatsapp">WhatsApp Number *</label>
-    <input
-      type="tel"
-      id="whatsapp"
-      required
-      pattern="[6-9]\d{9}"
-      placeholder="Enter 10-digit WhatsApp number"
-    />
-
+  <h2>Fill Your Details</h2>
+  <form id="userForm">
+    <input type="text" name="name" placeholder="Name" required />
+    <label>Gender:</label>
+    <label><input type="radio" name="gender" value="Male" required /> Male</label>
+    <label><input type="radio" name="gender" value="Female" required /> Female</label><br>
+    <input type="tel" name="whatsapp" placeholder="WhatsApp Number" required />
+    <input type="hidden" name="code" id="codeField" />
     <button type="submit">Submit</button>
   </form>
 
   <script>
-    document.getElementById('healthForm').addEventListener('submit', function (e) {
+    document.getElementById('codeField').value = new URLSearchParams(window.location.search).get('code');
+
+    document.getElementById('userForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name = document.getElementById('name').value.trim();
-      const whatsapp = document.getElementById('whatsapp').value.trim();
-
-      // Basic WhatsApp number validation
-      const isValid = /^[6-9]\d{9}$/.test(whatsapp);
-      if (!isValid) {
-        alert('Please enter a valid 10-digit WhatsApp number starting with 6-9.');
-        return;
-      }
-
-      const message = `Hi I am ${name}, Can I get my Healthy Diet ?`;
-      const phoneNumber = '918110036595'; // Your WhatsApp number without +
-
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      const form = new FormData(this);
+      fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+        method: 'POST',
+        body: form
+      }).then(() => {
+        alert('Submitted successfully!');
+        window.location.href = 'https://wa.me/91' + form.get("whatsapp") + '?text=Hi, your PDF report has been created: https://your-pdf-bucket/' + form.get("code") + '.pdf';
+      });
     });
   </script>
 </body>
