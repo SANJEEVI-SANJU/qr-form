@@ -1,41 +1,108 @@
-<!-- form.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>QR Form</title>
+  <meta charset="UTF-8" />
+  <title>QR Code Form</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    input, select { margin: 10px 0; padding: 10px; width: 100%; }
-    button { padding: 10px 20px; background-color: green; color: white; border: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
+
+<div class="form-container">
   <h2>Fill Your Details</h2>
-  <form id="userForm">
-    <input type="text" name="name" placeholder="Name" required />
+  <form id="qrForm">
+    <label for="name">Name:</label>
+    <input type="text" name="name" required>
+
     <label>Gender:</label>
-    <label><input type="radio" name="gender" value="Male" required /> Male</label>
-    <label><input type="radio" name="gender" value="Female" required /> Female</label><br>
-    <input type="tel" name="whatsapp" placeholder="WhatsApp Number" required />
-    <input type="hidden" name="code" id="codeField" />
+    <select name="gender" required>
+      <option value="">Select gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="whatsapp">WhatsApp Number:</label>
+    <input type="tel" name="whatsapp" placeholder="Include country code (e.g. +91...)" required>
+
+    <input type="hidden" name="code" id="code" value="">
+
     <button type="submit">Submit</button>
   </form>
 
-  <script>
-    document.getElementById('codeField').value = new URLSearchParams(window.location.search).get('code');
+  <p id="status" style="margin-top: 20px; color: green;"></p>
+</div>
 
-    document.getElementById('userForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+<script>
+  const form = document.getElementById("qrForm");
+  const status = document.getElementById("status");
 
-      const form = new FormData(this);
-      fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
-        method: 'POST',
-        body: form
-      }).then(() => {
-        alert('Submitted successfully!');
-        window.location.href = 'https://wa.me/91' + form.get("whatsapp") + '?text=Hi, your PDF report has been created: https://your-pdf-bucket/' + form.get("code") + '.pdf';
-      });
+  // Extract the ?code=XYZ123 from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  if (code) {
+    document.getElementById("code").value = code;
+  }
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    status.textContent = "Submitting...";
+
+    const formData = new FormData(form);
+
+    fetch("https://script.google.com/macros/s/AKfycbw206D9VCMpuxzFp1N_dG_2653RhtocD99gGq71Txbq6G-3ELfJU90MN9B3sL6DRUvDig/exec", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(response => {
+      status.textContent = "Submitted successfully!";
+      
+      const data = JSON.parse(response);
+      if (data && data.pdfUrl && data.whatsappNumber) {
+        const message = `Hi, here is your form confirmation PDF: ${data.pdfUrl}`;
+        const waLink = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(message)}`;
+        window.open(waLink, '_blank');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      status.textContent = "Submission failed. Try again.";
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
