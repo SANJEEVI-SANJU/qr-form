@@ -3,48 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Healthy Diet Form</title>
+  <title>Health Form</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f4f8;
+      background-color: #f2f4f8;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
     form {
-      background: #ffffff;
-      padding: 30px 40px;
+      background: white;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       max-width: 400px;
+      width: 100%;
     }
     h2 {
-      margin-bottom: 20px;
       text-align: center;
       color: #333;
     }
     label {
       display: block;
-      margin-top: 12px;
-      font-weight: 500;
+      margin-top: 15px;
+      font-weight: bold;
     }
     input[type="text"], input[type="tel"] {
       width: 100%;
       padding: 10px;
-      margin-top: 6px;
-      border-radius: 6px;
+      margin-top: 5px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
-    .gender-group {
+    .gender-options {
       margin-top: 10px;
     }
-    .gender-group label {
-      display: inline-block;
-      margin-right: 15px;
+    .gender-options label {
       font-weight: normal;
+      margin-right: 15px;
     }
     button {
       margin-top: 20px;
@@ -52,48 +51,61 @@
       padding: 12px;
       background-color: #4CAF50;
       color: white;
-      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #43a047;
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
+  <form id="healthForm">
+    <h2>Health Form</h2>
 
-  <form id="dietForm">
-    <h2>Get Your Healthy Diet</h2>
-    <label for="name">Name*</label>
-    <input type="text" id="name" name="name" required />
+    <label for="name">Name *</label>
+    <input type="text" id="name" required placeholder="Enter your name" />
 
-    <label>Gender*</label>
-    <div class="gender-group">
+    <label>Gender *</label>
+    <div class="gender-options">
       <label><input type="radio" name="gender" value="Male" required /> Male</label>
       <label><input type="radio" name="gender" value="Female" required /> Female</label>
-      <label><input type="radio" name="gender" value="Other" required /> Other</label>
     </div>
 
-    <label for="whatsapp">WhatsApp Number*</label>
-    <input type="tel" id="whatsapp" name="whatsapp" required />
+    <label for="whatsapp">WhatsApp Number *</label>
+    <input
+      type="tel"
+      id="whatsapp"
+      required
+      pattern="[6-9]\d{9}"
+      placeholder="Enter 10-digit WhatsApp number"
+    />
 
     <button type="submit">Submit</button>
   </form>
 
   <script>
-    document.getElementById('dietForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const message = `Hi I am ${name}, Can I get my Healthy Diet ?`;
-      const encodedMessage = encodeURIComponent(message);
-      const targetNumber = '918110036595'; // Your WhatsApp number without '+' or spaces
+    document.getElementById('healthForm').addEventListener('submit', function (e) {
+      e.preventDefault();
 
-      const whatsappUrl = `https://wa.me/${targetNumber}?text=${encodedMessage}`;
+      const name = document.getElementById('name').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+
+      // Basic WhatsApp number validation
+      const isValid = /^[6-9]\d{9}$/.test(whatsapp);
+      if (!isValid) {
+        alert('Please enter a valid 10-digit WhatsApp number starting with 6-9.');
+        return;
+      }
+
+      const message = `Hi I am ${name}, Can I get my Healthy Diet ?`;
+      const phoneNumber = '918110036595'; // Your WhatsApp number without +
+
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     });
   </script>
-
 </body>
 </html>
