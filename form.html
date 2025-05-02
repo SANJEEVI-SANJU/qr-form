@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <form id="healthForm">
+    <h2>Enter Your Details</h2>
+    <label for="name">Name *</label>
+    <input type="text" id="name" required>
+
+    <label>Gender *</label>
+    <div class="radio-group">
+      <label><input type="radio" name="gender" value="Male" required> Male</label>
+      <label><input type="radio" name="gender" value="Female" required> Female</label>
+    </div>
+
+    <label for="whatsapp">WhatsApp Number *</label>
+    <input type="tel" id="whatsapp" required pattern="^[0-9]{10,15}$">
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById("healthForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      const whatsapp = document.getElementById("whatsapp").value;
+
+      if (!name || !gender || !whatsapp) {
+        alert("All fields are required.");
+        return;
+      }
+
+      const message = encodeURIComponent(`Hi`);
+      window.location.href = `https://wa.me/${whatsapp}?text=${message}`;
+    });
+  </script>
+</body>
+</html>
