@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Request Diet Plan</title>
+  <title>Get Your Diet Plan</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -17,28 +17,25 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input, select {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       box-sizing: border-box;
+      font-size: 16px;
     }
     button {
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 12px;
-      width: 100%;
       cursor: pointer;
       border-radius: 5px;
-      font-size: 16px;
     }
     button:hover {
       background-color: #45a049;
     }
     #status {
       margin-top: 20px;
-      color: green;
       text-align: center;
       font-weight: bold;
     }
@@ -50,7 +47,7 @@
   <h2>Get Your Diet Plan</h2>
   <form id="dietForm">
     <label for="name">Name:</label>
-    <input type="text" name="name" required>
+    <input type="text" name="name" required />
 
     <label for="gender">Gender:</label>
     <select name="gender" required>
@@ -60,38 +57,49 @@
       <option value="Other">Other</option>
     </select>
 
-    <label for="whatsapp">Your WhatsApp Number:</label>
-    <input type="tel" name="whatsapp" placeholder="Include country code (e.g. +91...)" required>
+    <label for="whatsapp">WhatsApp Number:</label>
+    <input type="tel" name="whatsapp" placeholder="+91..." required />
 
-    <button type="submit">Send WhatsApp Message</button>
+    <button type="submit">Get Diet Plan</button>
   </form>
-
   <p id="status"></p>
 </div>
 
 <script>
   const form = document.getElementById("dietForm");
+  const status = document.getElementById("status");
 
-  form.addEventListener("submit", function(e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const formData = new FormData(form);
     const name = formData.get("name");
+    const gender = formData.get("gender");
+    const whatsapp = formData.get("whatsapp");
 
-    // Fixed receiver number
-    const myNumber = "8110036595";
+    status.textContent = "Processing...";
 
-    // Message only includes the name
-    const message = `Hi I am ${name}, Can I get my diet plan?`;
+    try {
+      const response = await fetch("http://localhost:3000/api/sendPdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, gender, whatsapp }),
+      });
 
-    // WhatsApp link
-    const waLink = `https://wa.me/${myNumber}?text=${encodeURIComponent(message)}`;
+      const data = await response.json();
 
-    // Open WhatsApp
-    window.open(waLink, "_blank");
-
-    // Show status
-    document.getElementById("status").textContent = "Opening WhatsApp...";
+      if (data.success) {
+        status.textContent = "✅ PDF sent to your WhatsApp!";
+        status.style.color = "green";
+      } else {
+        status.textContent = "❌ Failed to send. Try again.";
+        status.style.color = "red";
+      }
+    } catch (err) {
+      console.error(err);
+      status.textContent = "❌ Server error.";
+      status.style.color = "red";
+    }
   });
 </script>
 
