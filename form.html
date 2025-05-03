@@ -36,6 +36,12 @@
     button:hover {
       background-color: #45a049;
     }
+    #status {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -57,50 +63,33 @@
     <label for="whatsapp">WhatsApp Number:</label>
     <input type="tel" name="whatsapp" placeholder="Include country code (e.g. +91...)" required>
 
-    <input type="hidden" name="code" id="code" value="">
-
     <button type="submit">Submit</button>
   </form>
 
-  <p id="status" style="margin-top: 20px; color: green;"></p>
+  <p id="status"></p>
 </div>
 
 <script>
   const form = document.getElementById("qrForm");
-  const status = document.getElementById("status");
-
-  // Extract the ?code=XYZ123 from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-  if (code) {
-    document.getElementById("code").value = code;
-  }
 
   form.addEventListener("submit", function(e) {
     e.preventDefault();
-    status.textContent = "Submitting...";
 
     const formData = new FormData(form);
+    const whatsapp = formData.get("whatsapp");
 
-    fetch("https://script.google.com/macros/s/AKfycbw206D9VCMpuxzFp1N_dG_2653RhtocD99gGq71Txbq6G-3ELfJU90MN9B3sL6DRUvDig/exec", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.text())
-    .then(response => {
-      status.textContent = "Submitted successfully!";
-      
-      const data = JSON.parse(response);
-      if (data && data.pdfUrl && data.whatsappNumber) {
-        const message = `Hi, here is your form confirmation PDF: ${data.pdfUrl}`;
-        const waLink = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(message)}`;
-        window.open(waLink, '_blank');
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      status.textContent = "Submission failed. Try again.";
-    });
+    // Format number (remove + and spaces)
+    const cleanNumber = whatsapp.replace("+", "").replace(/\s/g, "");
+
+    // WhatsApp message
+    const message = "Hi";
+
+    // Open WhatsApp with message
+    const waLink = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+    window.open(waLink, "_blank");
+
+    // Show confirmation
+    document.getElementById("status").textContent = "Opening WhatsApp...";
   });
 </script>
 
